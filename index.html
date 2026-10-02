@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#15171c">
+<title>ออกใบเสนอราคา · AIMAN Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#15171c; --ink-2:#2a2d35; --muted:#6f7280; --faint:#9a9ca6;
+    --paper:#ffffff; --canvas:#f5f3ef; --line:#e7e3dc; --line-2:#d9d4cb;
+    --accent:#ee6a2c; --accent-2:#ff8a4c; --accent-soft:#fff1e8; --accent-ink:#b34612;
+    --ok:#1d7a4f; --ok-soft:#e7f5ee; --bad:#c2410c; --bad-soft:#fdeee6;
+    --r-lg:18px; --r:12px; --r-sm:9px;
+    --sh-1:0 1px 2px rgba(21,23,28,.05);
+    --sh-2:0 1px 2px rgba(21,23,28,.04),0 10px 30px -12px rgba(21,23,28,.14);
+    --sh-3:0 30px 80px -20px rgba(21,23,28,.35);
+    --f-head:"Anuphan","IBM Plex Sans Thai",system-ui,sans-serif;
+    --f-body:"IBM Plex Sans Thai",system-ui,sans-serif;
+    --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--f-body);background:var(--canvas);color:var(--ink);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .hidden{display:none!important}
+  button{font:inherit;cursor:pointer}
+  .num{font-variant-numeric:tabular-nums}
+
+  /* ---------- Top band ---------- */
+  .band{background:
+      radial-gradient(900px 300px at 85% -40%,rgba(238,106,44,.45),transparent 60%),
+      radial-gradient(600px 240px at 10% 120%,rgba(255,138,76,.18),transparent 60%),
+      var(--ink);
+    color:#fff;padding:22px 0 92px}
+  .container{max-width:1180px;margin:0 auto;padding:0 20px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .mark{width:40px;height:40px;border-radius:11px;background:linear-gradient(145deg,var(--accent-2),var(--accent));display:grid;place-items:center;box-shadow:0 8px 24px -6px rgba(238,106,44,.7)}
+  .mark svg{width:22px;height:22px}
+  .brand b{font-family:var(--f-head);font-size:16px;letter-spacing:.02em;display:block;line-height:1.2}
+  .brand span{font-size:12px;color:rgba(255,255,255,.6)}
+  .user{display:flex;align-items:center;gap:10px}
+  .pill{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.14);border-radius:99px;padding:5px 11px}
+  .pill i{width:7px;height:7px;border-radius:50%;background:#35d08a;box-shadow:0 0 0 3px rgba(53,208,138,.2)}
+  .ghost-w{background:transparent;border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:99px;padding:6px 14px;font-size:13px}
+  .ghost-w:hover{background:rgba(255,255,255,.08)}
+  .hero{margin-top:34px}
+  .hero h1{font-family:var(--f-head);font-weight:700;font-size:34px;line-height:1.2;margin:0;letter-spacing:-.01em}
+  .hero h1 em{font-style:normal;color:var(--accent-2)}
+  .hero p{margin:8px 0 0;color:rgba(255,255,255,.66);max-width:560px}
+
+  /* ---------- Layout ---------- */
+  .layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;margin-top:-64px;padding-bottom:60px}
+  .panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-2)}
+  .step{padding:24px 26px}
+  .step + .step{border-top:1px solid var(--line)}
+  .step-h{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+  .step-ic{width:36px;height:36px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none}
+  .step-ic svg{width:18px;height:18px}
+  .step-h h2{font-family:var(--f-head);font-size:17px;font-weight:600;margin:0;line-height:1.25}
+  .step-h p{margin:1px 0 0;color:var(--muted);font-size:13px}
+  .step-h .k{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--faint);letter-spacing:.08em}
+
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px}
+  .full{grid-column:1/-1}
+  .field label{display:block;font-size:13px;font-weight:500;color:var(--ink-2);margin-bottom:6px}
+  .field label .req{color:var(--accent)}
+  .control{position:relative}
+  .control > svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--faint);pointer-events:none}
+  .control textarea + svg{top:14px;transform:none}
+  input,select,textarea{width:100%;font:inherit;color:var(--ink);background:#fcfbf9;border:1px solid var(--line-2);border-radius:var(--r-sm);padding:10px 12px;outline:none;transition:border-color .15s,box-shadow .15s,background .15s}
+  .control.ic input,.control.ic textarea,.control.ic select{padding-left:38px}
+  textarea{resize:vertical;min-height:74px}
+  input::placeholder,textarea::placeholder{color:#b3b0a8}
+  input:hover,select:hover,textarea:hover{border-color:#c9c3b8}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 4px rgba(238,106,44,.14)}
+  select{appearance:none;-webkit-appearance:none;padding-right:38px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236f7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center}
+  input[readonly]{background:transparent;border-color:transparent;font-weight:600}
+  .hint{color:var(--muted);font-size:12px;margin-top:5px}
+
+  /* ---------- Items ---------- */
+  .items-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .db-status{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);background:#f6f4f0;border:1px solid var(--line);border-radius:99px;padding:5px 11px}
+  .db-status svg{width:14px;height:14px;color:var(--accent)}
+  .items{width:100%;border-collapse:separate;border-spacing:0}
+  .items th{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);text-align:left;padding:0 6px 8px}
+  .items td{padding:10px 6px;border-top:1px solid var(--line);vertical-align:top}
+  .items tr:hover td{background:#fcfbf8}
+  .items .c-no{width:46px;text-align:center;padding-top:18px}
+  .items .c-no span{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:7px;background:#f1eee8;font-size:12px;font-weight:600;color:var(--ink-2)}
+  .items .c-qty{width:92px}.items .c-price{width:136px}.items .c-total{width:128px}.items .c-del{width:40px}
+  .items th.r,.items input.r{text-align:right}
+  .del{border:0;background:none;color:var(--faint);padding:8px;border-radius:8px;margin-top:2px}
+  .del svg{width:16px;height:16px;display:block}
+  .del:hover{background:var(--bad-soft);color:var(--bad)}
+  .ac{position:relative}
+  .ac-list{position:absolute;z-index:30;left:0;right:0;top:calc(100% + 6px);background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh-3);max-height:300px;overflow:auto;display:none;padding:6px}
+  .ac-list.open{display:block}
+  .ac-item{padding:9px 10px;border-radius:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px}
+  .ac-item small{color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .ac-item.active,.ac-item:hover{background:var(--accent-soft)}
+  .ac-item.active small,.ac-item:hover small{color:var(--accent-ink)}
+  .tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:2px 8px;border-radius:99px;background:var(--ok-soft);color:var(--ok);margin-top:6px}
+  .tag.free{background:#f3f1ec;color:var(--muted)}
+  .pair{display:flex;gap:8px;align-items:center}
+  .pair>input{flex:1;min-width:0}
+  .pair>select{width:auto;min-width:86px;flex:none}
+  .chk{display:inline-flex;align-items:center;gap:8px;flex:1;font-weight:500;cursor:pointer;white-space:nowrap}
+  .chk input{width:18px;height:18px;flex:none}
+  .lockchip{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;color:var(--muted);margin-left:8px}
+  .lockchip svg{width:12px;height:12px}
+  #fixedRemarks{background:#f6f4ef;color:var(--ink-2);cursor:not-allowed;resize:none}
+  .sum .minus{color:var(--muted)}
+  .items textarea.desc{display:block;margin-top:8px;min-height:40px;padding:8px 11px;font-size:13px;line-height:1.45;resize:vertical}
+  .add{margin-top:12px;width:100%;border:1.5px dashed var(--line-2);background:transparent;color:var(--ink-2);border-radius:var(--r);padding:12px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:.15s}
+  .add svg{width:16px;height:16px}
+  .add:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+
+  /* ---------- Summary (paper) ---------- */
+  .aside{position:sticky;top:20px;align-self:start}
+  .paper{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-2);overflow:hidden}
+  .paper-top{padding:20px 22px 16px;border-bottom:1px dashed var(--line-2);position:relative}
+  .paper-top::after{content:"";position:absolute;left:0;right:0;bottom:-7px;height:12px;background:radial-gradient(circle at 6px 6px,var(--canvas) 5px,transparent 5.5px) -6px 0/18px 12px repeat-x}
+  .doc-kicker{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;color:var(--faint)}
+  .doc-title{font-family:var(--f-head);font-size:20px;font-weight:700;margin:4px 0 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .badge{font-family:var(--f-body);font-size:11px;font-weight:600;border-radius:99px;padding:3px 9px;background:var(--accent-soft);color:var(--accent-ink);white-space:nowrap}
+  .meta{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px}
+  .meta dt{color:var(--muted)}
+  .meta dd{margin:0;text-align:right;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .meta dd.empty{color:#c0bcb3;font-weight:400}
+  .paper-mid{padding:18px 22px 6px}
+  .mini{list-style:none;margin:0;padding:0;font-size:13px;max-height:180px;overflow:auto}
+  .mini li{display:flex;justify-content:space-between;gap:10px;padding:5px 0}
+  .mini li span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink-2)}
+  .mini li.none{color:#c0bcb3}
+  .sum{padding:10px 22px 4px}
+  .sum div{display:flex;justify-content:space-between;gap:16px;padding:4px 0;font-size:14px;color:var(--ink-2)}
+  .sum .grand{margin-top:8px;padding:14px 0 6px;border-top:1px solid var(--line);align-items:baseline}
+  .sum .grand span:first-child{font-weight:600;color:var(--ink)}
+  .sum .grand span:last-child{font-family:var(--f-head);font-weight:700;font-size:26px;color:var(--ink);letter-spacing:-.01em}
+  .sum .grand small{font-size:13px;color:var(--muted);font-weight:500;margin-left:4px}
+  .paper-foot{padding:14px 22px 22px}
+  .btn-save{width:100%;border:0;border-radius:var(--r);padding:14px 18px;font-weight:600;font-size:16px;color:#fff;background:linear-gradient(135deg,var(--accent-2),var(--accent));box-shadow:0 10px 24px -8px rgba(238,106,44,.65);display:flex;align-items:center;justify-content:center;gap:9px;transition:transform .12s,box-shadow .12s,filter .12s}
+  .btn-save svg{width:18px;height:18px}
+  .btn-save:hover{transform:translateY(-1px);box-shadow:0 14px 28px -8px rgba(238,106,44,.7)}
+  .btn-save:active{transform:translateY(0)}
+  .btn-save:disabled{filter:grayscale(.5);opacity:.6;cursor:not-allowed;transform:none;box-shadow:none}
+  .safe{display:flex;align-items:center;gap:7px;justify-content:center;margin-top:10px;font-size:12px;color:var(--muted)}
+  .safe svg{width:13px;height:13px}
+  .spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ---------- Alerts / Modal ---------- */
+  .alert{display:flex;gap:12px;align-items:flex-start;border-radius:var(--r);padding:14px 16px;margin:0 26px 0;white-space:pre-line;font-size:14px;background:var(--bad-soft);color:var(--bad);border:1px solid #f6d3c1}
+  .alert-wrap{padding-top:22px}
+  .alert svg{width:18px;height:18px;flex:none;margin-top:2px}
+  .overlay{position:fixed;inset:0;background:rgba(21,23,28,.55);backdrop-filter:blur(4px);display:grid;place-items:center;padding:20px;z-index:100;animation:fade .2s ease}
+  .modal{background:#fff;border-radius:22px;box-shadow:var(--sh-3);width:100%;max-width:520px;padding:30px 28px 24px;animation:pop .28s cubic-bezier(.2,.9,.3,1.2)}
+  @keyframes fade{from{opacity:0}} @keyframes pop{from{opacity:0;transform:translateY(12px) scale(.97)}}
+  .check{width:60px;height:60px;border-radius:50%;background:var(--ok-soft);display:grid;place-items:center;margin:0 auto 14px}
+  .check svg{width:30px;height:30px;color:var(--ok);stroke-dasharray:30;stroke-dashoffset:30;animation:draw .5s .15s ease forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .modal h2{font-family:var(--f-head);text-align:center;margin:0;font-size:22px}
+  .modal .sub{text-align:center;color:var(--muted);margin:4px 0 20px;font-size:14px}
+  .out{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  .out li{display:flex;gap:12px;align-items:center;padding:14px 16px;background:#fcfbf9}
+  .out li + li{border-top:1px solid var(--line)}
+  .out-ic{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;flex:none;background:#fff;border:1px solid var(--line)}
+  .out-ic svg{width:19px;height:19px}
+  .out-ic.qt{color:var(--accent)} .out-ic.spec{color:#2f6fd6}
+  .out-body{min-width:0;flex:1}
+  .out-body b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .out-body small{color:var(--muted);font-size:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .out-body small.err{color:var(--bad)}
+  .links{display:flex;gap:6px;flex-wrap:wrap}
+  .lnk{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--ink);text-decoration:none;border:1px solid var(--line-2);background:#fff;border-radius:8px;padding:6px 10px}
+  .lnk:hover{border-color:var(--accent);color:var(--accent)}
+  .lnk svg{width:13px;height:13px}
+  .dots{display:inline-flex;gap:3px}.dots i{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:bl 1s infinite}
+  .dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+  @keyframes bl{50%{opacity:.25}}
+  .modal-actions{display:flex;gap:10px;margin-top:20px}
+  .btn{flex:1;border-radius:var(--r);padding:12px 16px;font-weight:600;border:1px solid var(--line-2);background:#fff;color:var(--ink)}
+  .btn:hover{border-color:var(--ink)}
+  .btn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .btn.dark:hover{background:var(--ink-2)}
+
+
+  /* ---------- Mobile bar ---------- */
+  .mbar{display:none}
+  @media (max-width:980px){
+    .layout{grid-template-columns:1fr}
+    .aside{position:static}
+    .paper-foot{display:none}
+    .mbar{display:block;position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+    .mbar-in{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .mbar small{display:block;font-size:11px;color:var(--muted)}
+    .mbar b{font-family:var(--f-head);font-size:20px}
+    .mbar .btn-save{width:auto;padding:12px 20px;font-size:15px}
+    body{padding-bottom:80px}
+  }
+  @media (max-width:720px){
+    .band{padding-bottom:84px}
+    .hero h1{font-size:26px}
+    .pill{display:none}
+    .step{padding:20px 16px}
+    .alert{margin:0 16px}
+    .grid{grid-template-columns:1fr}
+    .items thead{display:none}
+    .items,.items tbody,.items tr,.items td{display:block;width:100%}
+    .items tr{border:1px solid var(--line);border-radius:var(--r);padding:10px 12px 12px;margin-bottom:10px;position:relative;background:#fcfbf9}
+    .items tr:hover td{background:transparent}
+    .items td{border:0;padding:4px 0}
+    .items .c-no{position:absolute;top:10px;left:12px;width:auto;padding:0}
+    .items .c-name{padding-top:32px}
+    .items .c-qty,.items .c-price,.items .c-total{display:inline-block;width:32%;vertical-align:top}
+    .items td[data-l]::before{content:attr(data-l);display:block;font-size:11px;color:var(--muted);margin-bottom:3px}
+    .items .c-del{position:absolute;top:4px;right:6px;width:auto}
+  }
+</style>
+</head>
+<body>
+
+<!-- SVG icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-logo" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-id" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 10h4M6 14h8M16 10h2"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.7Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></symbol>
+    <symbol id="i-db" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4Z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+    <symbol id="i-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></symbol>
+  </defs>
+</svg>
+
+<!-- ================= APP ================= -->
+<div id="app">
+  <div class="band">
+    <div class="container">
+      <div class="topbar">
+        <div class="brand"><div class="mark"><svg><use href="#i-logo"/></svg></div><div><b>AIMAN STUDIO</b><span>Sales · Quotation</span></div></div>
+        <div class="user"><span class="pill"><i></i>FlowAccount · Production</span></div>
+      </div>
+      <div class="hero">
+        <h1>สร้าง<em>ใบเสนอราคา</em>ใหม่</h1>
+        <p>กรอกข้อมูลด้านล่าง ระบบจะออกเอกสารใน FlowAccount และสร้างใบสเปคให้ทันทีเมื่อต้องการ</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container layout">
+    <form id="form" class="panel" novalidate autocomplete="off">
+      <div id="errWrap" class="alert-wrap hidden"><div class="alert"><svg><use href="#i-alert"/></svg><div id="errBox"></div></div></div>
+
+      <section class="step">
+        <div class="step-h"><div class="step-ic"><svg><use href="#i-doc"/></svg></div><div><h2>ผู้จัดทำและเอกสาร</h2><p>เลือกผู้รับผิดชอบและเอกสารที่ต้องการ</p></div><span class="k">01</span></div>
+        <div class="grid">
+          <div class="field">
+            <label for="salesName">ผู้จัดทำใบเสนอราคา <span class="req">*</span></label>
+            <div class="control ic">
+              <select id="salesName" required>
+                <option value="">เลือกผู้จัดทำ</option>
+                <option>ธัญภณกฤษ กิตติประโยค</option>
+                <option>กัญญารัตน์ คำเกตุ</option>
+                <option>สุเมธ อานานนท์</option>
+              </select><svg><use href="#i-user"/></svg>
+            </div>
+          </div>
+          <div class="field">
+            <label for="docType">เอกสารที่ต้องการ <span class="req">*</span></label>
+            <div class="control ic">
+              <select id="docType" required>
+                <option value="QT">ใบเสนอราคาเท่านั้น</option>
+                <option value="QT_SPEC">ใบเสนอราคา + ใบสเปค</option>
+              </select><svg><use href="#i-doc"/></svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="step">
+        <div class="step-h"><div class="step-ic"><svg><use href="#i-building"/></svg></div><div><h2>ข้อมูลลูกค้า</h2><p>ข้อมูลนี้จะแสดงบนหัวใบเสนอราคา</p></div><span class="k">02</span></div>
+        <div class="grid">
+          <div class="field full">
+            <label for="companyName">ชื่อบริษัท <span class="req">*</span></label>
+            <div class="control ic"><input id="companyName" placeholder="พิมพ์ชื่อเพื่อค้นหาลูกค้าเดิม หรือกรอกลูกค้าใหม่" autocomplete="off"><svg><use href="#i-building"/></svg><div class="ac-list" id="custList"></div></div>
+            <div class="hint">ลูกค้าที่เคยออกใบเสนอราคาจะขึ้นให้เลือก · ลูกค้าบุคคลธรรมดา เว้นว่างได้ ระบบจะใช้ชื่อผู้ติดต่อแทน</div>
+          </div>
+          <div class="field">
+            <label for="contactPerson">ชื่อผู้ติดต่อ</label>
+            <div class="control ic"><input id="contactPerson" placeholder="ชื่อ-นามสกุล"><svg><use href="#i-user"/></svg></div>
+          </div>
+          <div class="field">
+            <label for="phone">เบอร์โทร</label>
+            <div class="control ic"><input id="phone" inputmode="tel" placeholder="08x-xxx-xxxx"><svg><use href="#i-phone"/></svg></div>
+          </div>
+          <div class="field full">
+            <label for="address">ที่อยู่</label>
+            <div class="control ic"><textarea id="address" rows="2" placeholder="เลขที่ ถนน แขวง/ตำบล เขต/อำเภอ จังหวัด"></textarea><svg><use href="#i-pin"/></svg></div>
+          </div>
+          <div class="field">
+            <label for="zipCode">รหัสไปรษณีย์</label>
+            <div class="control ic"><input id="zipCode" inputmode="numeric" maxlength="5" placeholder="5 หลัก"><svg><use href="#i-pin"/></svg></div>
+          </div>
+          <div class="field">
+            <label for="taxId">เลขประจำตัวผู้เสียภาษี</label>
+            <div class="control ic"><input id="taxId" inputmode="numeric" maxlength="17" placeholder="13 หลัก"><svg><use href="#i-id"/></svg></div>
+          </div>
+          <div class="field">
+            <label for="branch">สำนักงาน/สาขาเลขที่</label>
+            <div class="control ic"><input id="branch" placeholder="เช่น สำนักงานใหญ่ หรือ 00001"><svg><use href="#i-building"/></svg></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="step">
+        <div class="step-h"><div class="step-ic"><svg><use href="#i-box"/></svg></div><div><h2>รายการสินค้า</h2><p>พิมพ์ชื่อหรือ SKU เพื่อค้นหาจากฐานข้อมูล</p></div><span class="k">03</span></div>
+        <div class="items-head">
+          <div class="field" style="min-width:280px;flex:1;max-width:380px">
+            <label for="vatMode">ราคาต่อหน่วยที่กรอก <span class="req">*</span></label>
+            <select id="vatMode">
+              <option value="EX">Ex-VAT · ยังไม่รวม VAT (บวก 7%)</option>
+              <option value="IN">In-VAT · รวม VAT แล้ว</option>
+            </select>
+          </div>
+          <span class="db-status"><svg><use href="#i-db"/></svg><span id="productStatus">กำลังโหลดฐานข้อมูลสินค้า…</span></span>
+        </div>
+        <table class="items">
+          <thead><tr><th class="c-no">#</th><th>ชื่อสินค้า</th><th class="c-qty r">จำนวน</th><th class="c-price r">ราคาต่อหน่วย</th><th class="c-total r">ราคารวม</th><th class="c-del"></th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <button type="button" class="add" id="addRow"><svg><use href="#i-plus"/></svg>เพิ่มรายการสินค้า</button>
+      </section>
+
+      <section class="step">
+        <div class="step-h"><div class="step-ic"><svg><use href="#i-doc"/></svg></div><div><h2>ส่วนลด ภาษี และหมายเหตุ</h2><p>แสดงท้ายใบเสนอราคา เหมือนใน FlowAccount</p></div><span class="k">04</span></div>
+        <div class="grid">
+          <div class="field">
+            <label for="discountValue">ส่วนลด</label>
+            <div class="pair">
+              <input id="discountValue" class="r num" type="number" min="0" step="any" value="0" inputmode="decimal">
+              <select id="discountType" aria-label="ประเภทส่วนลด">
+                <option value="PCT">%</option>
+                <option value="AMT">บาท</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="whtRate">หักภาษี ณ ที่จ่าย</label>
+            <div class="pair">
+              <label class="chk"><input type="checkbox" id="whtOn"> หัก ณ ที่จ่าย</label>
+              <select id="whtRate" aria-label="อัตราหัก ณ ที่จ่าย" disabled>
+                <option value="1">1%</option>
+                <option value="1.5">1.5%</option>
+                <option value="2">2%</option>
+                <option value="3" selected>3%</option>
+                <option value="5">5%</option>
+                <option value="10">10%</option>
+              </select>
+            </div>
+          </div>
+          <div class="field full">
+            <label for="fixedRemarks">หมายเหตุ <span class="lockchip"><svg><use href="#i-lock"/></svg>ข้อความบังคับ แก้ไขไม่ได้</span></label>
+            <div class="control"><textarea id="fixedRemarks" rows="3" readonly tabindex="-1"></textarea></div>
+            <div class="hint">ข้อความนี้จะอยู่ในใบเสนอราคาทุกใบ</div>
+          </div>
+          <div class="field full">
+            <label for="extraRemarks">หมายเหตุเพิ่มเติม</label>
+            <div class="control"><textarea id="extraRemarks" rows="2" placeholder="ถ้ามี ระบบจะต่อท้ายข้อความบังคับด้านบน"></textarea></div>
+          </div>
+        </div>
+      </section>
+    </form>
+
+    <aside class="aside">
+      <div class="paper">
+        <div class="paper-top">
+          <div class="doc-kicker">PREVIEW · ตัวอย่างเอกสาร</div>
+          <div class="doc-title">ใบเสนอราคา <span class="badge" id="sumDoc">QT</span></div>
+          <dl class="meta">
+            <dt>ลูกค้า</dt><dd id="sumCustomer" class="empty">ยังไม่ระบุ</dd>
+            <dt>ผู้จัดทำ</dt><dd id="sumSales" class="empty">ยังไม่เลือก</dd>
+            <dt>ราคา</dt><dd id="sumVat">Ex-VAT</dd>
+          </dl>
+        </div>
+        <div class="paper-mid">
+          <ul class="mini" id="sumItems"><li class="none">ยังไม่มีรายการ</li></ul>
+        </div>
+        <div class="sum">
+          <div><span>รวมเป็นเงิน</span><span id="tSub" class="num">0.00</span></div>
+          <div id="tDiscRow" class="hidden minus"><span id="tDiscLabel">ส่วนลด</span><span id="tDisc" class="num">0.00</span></div>
+          <div id="tAfterRow" class="hidden"><span>ราคาหลังหักส่วนลด</span><span id="tAfter" class="num">0.00</span></div>
+          <div><span>ราคาไม่รวมภาษีมูลค่าเพิ่ม</span><span id="tBefore" class="num">0.00</span></div>
+          <div><span>ภาษีมูลค่าเพิ่ม 7%</span><span id="tVat" class="num">0.00</span></div>
+          <div class="grand"><span>จำนวนเงินรวมทั้งสิ้น</span><span><span id="tGrand" class="num">0.00</span><small>บาท</small></span></div>
+          <div id="tWhtRow" class="hidden minus"><span id="tWhtLabel">หักภาษี ณ ที่จ่าย</span><span id="tWht" class="num">0.00</span></div>
+          <div id="tNetRow" class="hidden"><span>ยอดชำระ</span><span id="tNet" class="num">0.00</span></div>
+        </div>
+        <div class="paper-foot">
+          <button class="btn-save" id="saveBtn" type="button"><svg><use href="#i-send"/></svg><span>บันทึกข้อมูล</span></button>
+          <div class="safe"><svg><use href="#i-lock"/></svg>ระบบจะถามยืนยันก่อนสร้างเอกสารจริง</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="mbar" id="bar">
+    <div class="mbar-in">
+      <div><small>ยอดรวมทั้งสิ้น</small><b class="num"><span id="barGrand">0.00</span> ฿</b></div>
+      <button class="btn-save" id="barSave" type="button"><svg><use href="#i-send"/></svg>บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= RESULT MODAL ================= -->
+<div id="resultModal" class="overlay hidden" role="dialog" aria-modal="true">
+  <div class="modal" id="resultBox"></div>
+</div>
+
+<script>
+(() => {
+  const DEMO = new URLSearchParams(location.search).get('demo') === '1';
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n) => (Math.round((n + Number.EPSILON) * 100) / 100).toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const icon = (id) => `<svg><use href="#${id}"/></svg>`;
+  let products = [];
+
+  /* ---------- API ---------- */
+  // เมื่อเปิดผ่าน Google Apps Script (เว็บแอปของ sales-co) จะเรียกหลังบ้านด้วย google.script.run แทน fetch
+  const GAS = typeof google !== 'undefined' && google.script && google.script.run;
+  const gas = (fn, arg) => new Promise((resolve, reject) => {
+    google.script.run.withSuccessHandler(resolve).withFailureHandler((e) => reject(new Error((e && e.message) || String(e))))[fn](arg);
+  });
+  // หน้าเว็บที่วางบนโฮสต์อื่น (ไม่ใช่ Netlify) จะเรียกหลังบ้านที่ Apps Script ของ sales-co โดยตรง
+  const BACKEND = 'https://script.google.com/macros/s/AKfycbyIqrBJouenchwbOUfuDCORorbEZ6RgybW9111tQzt5NIa6GDYbc9LH6uBwubhCEa-_/exec';
+  const REMOTE = !GAS && !/netlify\.app$/.test(location.hostname);
+  // text/plain เพื่อเรียก Apps Script ข้ามโดเมนได้โดยไม่ต้อง preflight
+  const remote = (body) => fetch(BACKEND, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body), redirect: 'follow' }).then((r) => r.json());
+  async function api(path, opts = {}) {
+    if (DEMO) return demoApi(path, opts);
+    if (GAS) return path.startsWith('/api/products') ? gas('apiProducts') : gas('apiCreateQuotation', JSON.parse(opts.body));
+    if (REMOTE) return path.startsWith('/api/products') ? remote({ action: 'products' }) : remote({ action: 'createQuotation', input: JSON.parse(opts.body) });
+    return fetchApi(path, opts);
+  }
+  // ค้นหาลูกค้าเดิมจากฐานข้อมูลลูกค้า (Google Sheet ของ sales-co)
+  async function searchCustomers(q) {
+    if (DEMO) return { ok: true, customers: [{ companyName: 'บริษัท กู๊ดวิว มีเดีย พลัส จำกัด', contactPerson: 'คุณเอ', phone: '0812345678', address: '99 ถ.สุขุมวิท', zipCode: '10110', taxId: '0105560000001', branch: 'สำนักงานใหญ่' }].filter(c => c.companyName.includes(q)) };
+    if (GAS) return gas('apiCustomers', q);
+    if (REMOTE) return remote({ action: 'customers', q });
+    return { ok: true, customers: [] };
+  }
+  async function fetchApi(path, opts = {}) {
+    const res = await fetch(path, { ...opts, headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) } });
+    const data = await res.json().catch(() => ({ ok: false, error: `เซิร์ฟเวอร์ตอบกลับไม่ถูกต้อง (${res.status})` }));
+    return data;
+  }
+  async function callSpec(endpoint, token) {
+    if (DEMO) { await new Promise(r => setTimeout(r, 1600)); return { ok: true, docName: 'QT202609300001_บริษัท กู๊ดวิว มีเดีย พลัส จำกัด', docUrl: '#', pdfUrl: '#' }; }
+    if (GAS) return gas('apiCreateSpec', token);
+    if (endpoint === 'gas') return remote({ action: 'createSpec', token });
+    // text/plain เพื่อเรียก Apps Script ข้ามโดเมนได้โดยไม่ต้อง preflight
+    const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ token }), redirect: 'follow' });
+    return res.json();
+  }
+  function demoApi(path) {
+    if (path.startsWith('/api/products')) return Promise.resolve({ ok: true, products: [
+      { n: 'ถุงทรายถ่วงน้ำหนัก SANDBAG B', s: 'SB-B', p: 290 },
+      { n: 'ขาตั้งไฟสตูดิโอ 2.8 เมตร', s: 'LS-280', p: 890 },
+      { n: 'ไฟ LED สตูดิโอ 100W', s: 'LED-100', p: 3490 },
+      { n: 'ฉากหลังผ้ามัสลิน 3x6 เมตร', s: 'BG-36', p: 1290 } ] });
+    return new Promise(r => setTimeout(() => r({ ok: true, documentSerial: 'QT202609300001', specEndpoint: 'demo', specToken: 'demo' }), 900));
+  }
+
+
+  let dbError = '';
+  async function loadProducts() {
+    const chip = $('productStatus');
+    try {
+      const data = await api('/api/products');
+      if (!data.ok) throw new Error(data.error || 'ไม่ทราบสาเหตุ');
+      products = data.products.map(p => ({ ...p, k: p.n.toLowerCase() + ' ' + String(p.s || '').toLowerCase() }));
+      dbError = '';
+      chip.textContent = `เชื่อมฐานข้อมูลแล้ว · ${products.length.toLocaleString('th-TH')} รายการ`;
+      chip.parentElement.style.cssText = '';
+      return true;
+    } catch (e) {
+      dbError = e.message === 'Failed to fetch' || /Unexpected token|JSON/.test(e.message)
+        ? 'ไม่พบระบบหลังบ้าน (ต้องเปิดผ่านลิงก์เว็บแอปจริง)'
+        : e.message;
+      chip.textContent = `เชื่อมฐานข้อมูลไม่ได้: ${dbError}`;
+      chip.parentElement.style.cssText = 'color:var(--bad);background:var(--bad-soft);border-color:#f6d3c1';
+      chip.parentElement.title = 'คลิกเพื่อลองเชื่อมต่อใหม่';
+      chip.parentElement.onclick = () => { chip.textContent = 'กำลังเชื่อมต่อใหม่…'; loadProducts(); };
+      chip.parentElement.style.cursor = 'pointer';
+      return false;
+    }
+  }
+
+  /* ---------- Rows ---------- */
+  function addRow(prefill = {}) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="c-no"><span></span></td>
+      <td class="c-name"><div class="ac">
+        <input class="name" placeholder="ค้นหาชื่อสินค้าหรือ SKU" autocomplete="off" value="${esc(prefill.name || '')}">
+        <div class="ac-list"></div></div>
+        <span class="tag free hidden"></span>
+        <textarea class="desc" rows="1" placeholder="รายละเอียด / หมายเหตุ">${esc(prefill.description || '')}</textarea></td>
+      <td class="c-qty" data-l="จำนวน"><input class="qty r num" type="number" min="0" step="any" value="${prefill.quantity ?? 1}" inputmode="decimal"></td>
+      <td class="c-price" data-l="ราคาต่อหน่วย"><input class="price r num" type="number" min="0" step="0.01" value="${prefill.pricePerUnit ?? ''}" inputmode="decimal" placeholder="0.00"></td>
+      <td class="c-total" data-l="ราคารวม"><input class="total r num" readonly tabindex="-1" value="0.00"></td>
+      <td class="c-del"><button type="button" class="del" title="ลบรายการ" aria-label="ลบรายการ">${icon('i-trash')}</button></td>`;
+    $('rows').appendChild(tr);
+    wireRow(tr);
+    renumber(); recalc();
+    return tr;
+  }
+
+  function setProduct(tr, p) {
+    const tag = tr.querySelector('.tag');
+    tr.dataset.sku = p ? (p.s || '') : '';
+    if (p) {
+      tr.querySelector('.name').value = p.n;
+      const price = tr.querySelector('.price');
+      if (!price.value && p.p) price.value = p.p;
+      tag.innerHTML = `${icon('i-check').replace('<svg>', '<svg style="width:11px;height:11px">')}จากฐานข้อมูล${p.s ? ' · SKU ' + esc(p.s) : ''}`;
+      tag.className = 'tag';
+    } else {
+      const v = tr.querySelector('.name').value.trim();
+      tag.textContent = products.length
+        ? 'ไม่พบในฐานข้อมูล · ใบสเปคจะไม่มีรูปและรายละเอียด'
+        : 'ยังเชื่อมฐานข้อมูลสินค้าไม่ได้ · ดูข้อความสีแดงด้านบน';
+      tag.className = v ? 'tag free' : 'tag free hidden';
+    }
+    recalc();
+  }
+
+  function wireRow(tr) {
+    const input = tr.querySelector('.name');
+    const list = tr.querySelector('.ac-list');
+    let active = -1, shown = [];
+    const close = () => { list.classList.remove('open'); active = -1; };
+    const render = () => {
+      const q = input.value.trim().toLowerCase();
+      if (!q || !products.length) { close(); return; }
+      const words = q.split(/\s+/);
+      shown = products.filter(p => words.every(w => p.k.includes(w))).slice(0, 30);
+      if (!shown.length) { close(); return; }
+      list.innerHTML = shown.map((p, i) => `<div class="ac-item${i === active ? ' active' : ''}" data-i="${i}"><span>${esc(p.n)}</span><small>${p.p ? '฿' + fmt(p.p) : ''}</small></div>`).join('');
+      list.classList.add('open');
+    };
+    input.addEventListener('input', () => { active = -1; render(); tr.dataset.sku = ''; recalc(); });
+    input.addEventListener('keydown', (e) => {
+      if (!list.classList.contains('open')) return;
+      if (e.key === 'ArrowDown') { active = Math.min(active + 1, shown.length - 1); render(); e.preventDefault(); }
+      else if (e.key === 'ArrowUp') { active = Math.max(active - 1, 0); render(); e.preventDefault(); }
+      else if (e.key === 'Enter' && active >= 0) { setProduct(tr, shown[active]); close(); e.preventDefault(); }
+      else if (e.key === 'Escape') close();
+    });
+    list.addEventListener('mousedown', (e) => {
+      const it = e.target.closest('.ac-item'); if (!it) return;
+      e.preventDefault(); setProduct(tr, shown[+it.dataset.i]); close();
+    });
+    input.addEventListener('blur', () => {
+      setTimeout(close, 120);
+      if (!tr.dataset.sku) {
+        const exact = products.find(p => p.n.toLowerCase() === input.value.trim().toLowerCase());
+        setProduct(tr, exact || null);
+      }
+    });
+    tr.querySelector('.qty').addEventListener('input', recalc);
+    tr.querySelector('.price').addEventListener('input', recalc);
+    tr.querySelector('.del').onclick = () => {
+      if ($('rows').children.length === 1) {
+        tr.querySelector('.name').value = ''; tr.querySelector('.qty').value = 1; tr.querySelector('.price').value = '';
+        setProduct(tr, null); return;
+      }
+      tr.remove(); renumber(); recalc();
+    };
+  }
+
+  function renumber() { [...$('rows').children].forEach((tr, i) => tr.querySelector('.c-no span').textContent = i + 1); }
+
+  function readItems() {
+    return [...$('rows').children].map(tr => ({
+      name: tr.querySelector('.name').value.trim(),
+      sku: tr.dataset.sku || '',
+      quantity: parseFloat(tr.querySelector('.qty').value) || 0,
+      pricePerUnit: parseFloat(tr.querySelector('.price').value) || 0,
+      description: tr.querySelector('.desc').value.trim(),
+    })).filter(it => it.name || it.pricePerUnit);
+  }
+
+  function setMeta(id, value, emptyText) {
+    const el = $(id); const v = (value || '').trim();
+    el.textContent = v || emptyText; el.classList.toggle('empty', !v);
+  }
+
+  function recalc() {
+    let sub = 0;
+    const lines = [];
+    [...$('rows').children].forEach(tr => {
+      const t = (parseFloat(tr.querySelector('.qty').value) || 0) * (parseFloat(tr.querySelector('.price').value) || 0);
+      tr.querySelector('.total').value = fmt(t); sub += Math.round(t * 100) / 100;
+      const n = tr.querySelector('.name').value.trim();
+      if (n) lines.push(`<li><span>${esc(n)} × ${esc(tr.querySelector('.qty').value || 0)}</span><span class="num">${fmt(t)}</span></li>`);
+    });
+    const r2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
+    sub = r2(sub);
+    const inVat = $('vatMode').value === 'IN';
+    const dVal = Math.max(0, parseFloat($('discountValue').value) || 0);
+    const isPct = $('discountType').value === 'PCT';
+    const disc = Math.min(sub, r2(isPct ? sub * Math.min(dVal, 100) / 100 : dVal));
+    const after = r2(sub - disc);
+    const vat = r2(inVat ? after * 7 / 107 : after * 0.07);
+    const grand = inVat ? after : r2(after + vat);
+    const before = inVat ? r2(after - vat) : after;
+    const whtOn = $('whtOn').checked, whtRate = parseFloat($('whtRate').value) || 0;
+    const wht = whtOn ? r2(before * whtRate / 100) : 0;
+    $('whtRate').disabled = !whtOn;
+    $('tSub').textContent = fmt(sub); $('tVat').textContent = fmt(vat); $('tGrand').textContent = fmt(grand);
+    $('barGrand').textContent = fmt(grand); $('tBefore').textContent = fmt(before);
+    $('tDiscRow').classList.toggle('hidden', !disc); $('tAfterRow').classList.toggle('hidden', !disc);
+    $('tDiscLabel').textContent = isPct && disc ? `ส่วนลด ${Math.min(dVal, 100)}%` : 'ส่วนลด';
+    $('tDisc').textContent = '-' + fmt(disc); $('tAfter').textContent = fmt(after);
+    $('tWhtRow').classList.toggle('hidden', !whtOn); $('tNetRow').classList.toggle('hidden', !whtOn);
+    $('tWhtLabel').textContent = `หักภาษี ณ ที่จ่าย ${whtRate}%`;
+    $('tWht').textContent = '-' + fmt(wht); $('tNet').textContent = fmt(r2(grand - wht));
+    $('sumItems').innerHTML = lines.length ? lines.join('') : '<li class="none">ยังไม่มีรายการ</li>';
+    updateSummary();
+  }
+
+  function updateSummary() {
+    setMeta('sumCustomer', $('companyName').value || $('contactPerson').value, 'ยังไม่ระบุ');
+    setMeta('sumSales', $('salesName').value, 'ยังไม่เลือก');
+    $('sumVat').textContent = $('vatMode').value === 'IN' ? 'In-VAT (รวม VAT)' : 'Ex-VAT (บวก VAT 7%)';
+    $('sumDoc').textContent = $('docType').value === 'QT_SPEC' ? 'QT + ใบสเปค' : 'QT';
+  }
+
+  ['companyName', 'contactPerson', 'salesName', 'docType'].forEach(id => $(id).addEventListener('input', updateSummary));
+  ['salesName', 'docType'].forEach(id => $(id).addEventListener('change', updateSummary));
+  ['vatMode', 'discountType', 'whtOn', 'whtRate'].forEach(id => $(id).addEventListener('change', recalc));
+  $('discountValue').addEventListener('input', recalc);
+  $('zipCode').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 5); });
+  $('addRow').onclick = () => addRow().querySelector('.name').focus();
+  $('taxId').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/[^\d-]/g, ''); });
+  $('barSave').onclick = () => $('saveBtn').click();
+
+  /* ---------- ลูกค้าเดิม ---------- */
+  (() => {
+    const input = $('companyName'), list = $('custList');
+    let shown = [], active = -1, timer = null, seq = 0;
+    const close = () => { list.classList.remove('open'); active = -1; };
+    const render = () => {
+      if (!shown.length) return close();
+      list.innerHTML = shown.map((c, i) => `<div class="ac-item${i === active ? ' active' : ''}" data-i="${i}"><span>${esc(c.companyName || c.contactPerson)}</span><small>${esc(c.taxId || c.phone || '')}</small></div>`).join('');
+      list.classList.add('open');
+    };
+    const pick = (c) => {
+      $('companyName').value = c.companyName || ''; $('contactPerson').value = c.contactPerson || ''; $('phone').value = c.phone || '';
+      $('address').value = c.address || ''; $('zipCode').value = c.zipCode || ''; $('taxId').value = c.taxId || ''; $('branch').value = c.branch || '';
+      close(); updateSummary();
+    };
+    input.addEventListener('input', () => {
+      clearTimeout(timer);
+      const q = input.value.trim();
+      if (q.length < 2) { shown = []; return close(); }
+      timer = setTimeout(async () => {
+        const my = ++seq;
+        try {
+          const r = await searchCustomers(q);
+          if (my !== seq) return;
+          shown = (r && r.ok && r.customers) || []; active = -1; render();
+        } catch (e) { /* ค้นหาไม่ได้ก็ยังกรอกเองได้ */ }
+      }, 300);
+    });
+    input.addEventListener('keydown', (e) => {
+      if (!list.classList.contains('open')) return;
+      if (e.key === 'ArrowDown') { active = Math.min(active + 1, shown.length - 1); render(); e.preventDefault(); }
+      else if (e.key === 'ArrowUp') { active = Math.max(active - 1, 0); render(); e.preventDefault(); }
+      else if (e.key === 'Enter' && active >= 0) { pick(shown[active]); e.preventDefault(); }
+      else if (e.key === 'Escape') close();
+    });
+    list.addEventListener('mousedown', (e) => { const it = e.target.closest('.ac-item'); if (!it) return; e.preventDefault(); pick(shown[+it.dataset.i]); });
+    input.addEventListener('blur', () => setTimeout(close, 150));
+  })();
+
+  /* ---------- Submit ---------- */
+  function showError(msg) { $('errBox').textContent = msg; $('errWrap').classList.remove('hidden'); $('form').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  function hideError() { $('errWrap').classList.add('hidden'); }
+
+  function collect() {
+    return {
+      salesName: $('salesName').value,
+      docType: $('docType').value,
+      vatMode: $('vatMode').value,
+      customer: {
+        contactPerson: $('contactPerson').value, phone: $('phone').value,
+        companyName: $('companyName').value, address: $('address').value, taxId: $('taxId').value,
+        zipCode: $('zipCode').value, branch: $('branch').value,
+      },
+      discount: { type: $('discountType').value, value: Math.max(0, parseFloat($('discountValue').value) || 0) },
+      withholding: { enabled: $('whtOn').checked, rate: parseFloat($('whtRate').value) || 0 },
+      extraRemarks: $('extraRemarks').value,
+      items: readItems(),
+    };
+  }
+
+  function localValidate(d) {
+    const e = [];
+    if (!d.salesName) e.push('กรุณาเลือกผู้จัดทำใบเสนอราคา');
+    if (!d.customer.companyName.trim() && !d.customer.contactPerson.trim()) e.push('กรุณากรอกชื่อบริษัทหรือชื่อผู้ติดต่อ');
+    const tax = d.customer.taxId.replace(/\D/g, '');
+    if (tax && tax.length !== 13) e.push('เลขผู้เสียภาษีต้องมี 13 หลัก');
+    if (d.customer.zipCode && d.customer.zipCode.length !== 5) e.push('รหัสไปรษณีย์ต้องมี 5 หลัก');
+    if (d.discount.type === 'PCT' && d.discount.value > 100) e.push('ส่วนลดต้องไม่เกิน 100%');
+    if (!d.items.length) e.push('กรุณาเพิ่มรายการสินค้าอย่างน้อย 1 รายการ');
+    d.items.forEach((it, i) => {
+      if (!it.name) e.push(`รายการที่ ${i + 1}: กรุณาระบุชื่อสินค้า`);
+      if (!(it.quantity > 0)) e.push(`รายการที่ ${i + 1}: จำนวนต้องมากกว่า 0`);
+    });
+    return e;
+  }
+
+  function outRow(cls, ic, title, body) {
+    return `<div class="out-ic ${cls}">${icon(ic)}</div><div class="out-body"><b>${title}</b>${body}</div>`;
+  }
+  const lnk = (href, label) => `<a class="lnk" href="${esc(href)}" target="_blank" rel="noopener">${label}${icon('i-ext')}</a>`;
+
+  async function runSpec(endpoint, token) {
+    const li = $('specLine');
+    li.innerHTML = outRow('spec', 'i-doc', 'ใบสเปค (Google Doc + PDF)', `<small><span class="dots"><i></i><i></i><i></i></span>กำลังสร้าง ใช้เวลาประมาณ 10–30 วินาที</small>`);
+    try {
+      const r = await callSpec(endpoint, token);
+      if (!r.ok) throw new Error(r.error || 'สร้างใบสเปคไม่สำเร็จ');
+      li.innerHTML = outRow('spec', 'i-doc', esc(r.docName), `<div class="links" style="margin-top:6px">${lnk(r.docUrl, 'Google Doc')}${lnk(r.pdfUrl, 'PDF')}</div>`);
+    } catch (e) {
+      li.innerHTML = outRow('spec', 'i-doc', 'ใบสเปค', `<small class="err">${esc(e.message)}</small><div class="links" style="margin-top:6px"><button class="lnk" id="retrySpec" type="button">ลองอีกครั้ง</button></div>`);
+      $('retrySpec').onclick = () => runSpec(endpoint, token);
+    }
+  }
+
+  function setSaving(on) {
+    [$('saveBtn'), $('barSave')].forEach(b => {
+      b.disabled = on;
+      b.innerHTML = on ? '<span class="spin"></span>กำลังบันทึก…' : `${icon('i-send')}<span>${b.id === 'barSave' ? 'บันทึก' : 'บันทึกข้อมูล'}</span>`;
+    });
+  }
+
+  $('saveBtn').onclick = async () => {
+    hideError();
+    const d = collect();
+    const errs = localValidate(d);
+    if (errs.length) return showError(errs.join('\n'));
+    const what = d.docType === 'QT_SPEC' ? 'ใบเสนอราคาและใบสเปค' : 'ใบเสนอราคา';
+    if (!confirm(`ยืนยันสร้าง${what}ใน FlowAccount (Production)\nลูกค้า: ${d.customer.companyName || d.customer.contactPerson}\nยอดรวม: ${$('tGrand').textContent} บาท`)) return;
+
+    setSaving(true);
+    try {
+      const r = await api('/api/create-quotation', { method: 'POST', body: JSON.stringify(d) });
+      if (!r.ok) throw new Error(r.error || 'บันทึกไม่สำเร็จ');
+      $('resultBox').innerHTML = `
+        <div class="check">${icon('i-check')}</div>
+        <h2>บันทึกเรียบร้อย</h2>
+        <p class="sub">${esc(d.customer.companyName || d.customer.contactPerson)} · ${$('tGrand').textContent} บาท</p>
+        <ul class="out">
+          <li>${outRow('qt', 'i-doc', `ใบเสนอราคา ${esc(r.documentSerial || '(ไม่ทราบเลขที่)')}`, `<small>สร้างใน FlowAccount แล้ว · สถานะรออนุมัติ</small><div class="links" style="margin-top:6px">${lnk('https://www.flowaccount.com', 'เปิด FlowAccount')}</div>`)}</li>
+          ${d.docType === 'QT_SPEC' ? '<li id="specLine"></li>' : ''}
+        </ul>
+        <div class="modal-actions">
+          <button type="button" class="btn" id="closeBtn">กลับไปที่ฟอร์ม</button>
+          <button type="button" class="btn dark" id="newBtn">สร้างใบใหม่</button>
+        </div>`;
+      $('resultModal').classList.remove('hidden');
+      $('newBtn').onclick = resetForm;
+      $('closeBtn').onclick = () => $('resultModal').classList.add('hidden');
+      if (d.docType === 'QT_SPEC') {
+        if (r.specError) $('specLine').innerHTML = outRow('spec', 'i-doc', 'ใบสเปค', `<small class="err">${esc(r.specError)}</small>`);
+        else runSpec(r.specEndpoint, r.specToken);
+      }
+      setSaving(false);
+      [$('saveBtn'), $('barSave')].forEach(b => { b.disabled = true; b.innerHTML = `${icon('i-check')}<span>บันทึกแล้ว</span>`; });
+    } catch (e) {
+      showError(e.message);
+      setSaving(false);
+    }
+  };
+
+  function resetForm() {
+    $('form').reset(); $('fixedRemarks').value = FIXED_REMARKS; $('rows').innerHTML = ''; addRow();
+    $('resultModal').classList.add('hidden'); hideError();
+    setSaving(false); recalc(); window.scrollTo({ top: 0 });
+  }
+
+  /* ---------- Start ---------- */
+  // ข้อความบังคับในหมายเหตุ (เซิร์ฟเวอร์ใส่ให้เองทุกใบ หน้านี้แสดงให้เห็นเท่านั้น)
+  const FIXED_REMARKS = 'กำหนดยืนราคา 7 วัน นับตั้งแต่วันที่เสนอราคาชำระเงินก่อนมอบสินค้า ชื่อบัญชี บจก.เอไอแมน  ธ.กสิกร เลขบัญชี 023-1-66879-9';
+  $('fixedRemarks').value = FIXED_REMARKS;
+  addRow();
+  loadProducts();
+})();
+</script>
+</body>
+</html>
